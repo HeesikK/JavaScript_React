@@ -115,3 +115,76 @@ const UseMemo = () => {
 export default UseMemo;
 ```
 person이 return 하는 값을 useMemo로 캐싱함으로써 의존성 배열에 있는 authenticate값이 변경될때만 값을 초기화하고, age 값이 변경되었을때는 이전에 캐싱되어 있던 값을 사용하므로 위 컴포넌트를 실행하면 authenticate값이 변경될때만 console에 값이 출력되는것을 확인할 수 있다.
+# 📑 useCallback
+useCallback hook은 리액트에서 컴포넌트 성능 최적화에 사용되는 hook으로, useMemo와 비슷하지만 값이 아닌 함수를 캐싱한다는 것에 차이가 있다.
+```javascript
+// components/useCallback.jsx
+const UseCallback = () => {
+  const [sizeCss, setSizeCss] = useState(100);
+  const [forceRender, setForceRender] = useState(false);
+
+  const changeBoxSize = () => {
+    return { backgroundColor: "red", width: `${sizeCss}px`, height: `${sizeCss}px` };
+  };
+
+  return (
+    <>
+      <input type="number" value={sizeCss} onChange={(e) => setSizeCss(e.target.value)} />
+      <button onClick={() => setForceRender(!forceRender)}>setState</button>
+      <Box changeBoxSize={changeBoxSize} />
+    </>
+  );
+};
+
+export default UseCallback;
+
+// components/Box.jsx
+const Box = ({ changeBoxSize }) => {
+  const [style, setStyle] = useState({});
+
+  useEffect(() => {
+    console.log("style 변경!");
+    setStyle(changeBoxSize());
+  }, [changeBoxSize]);
+
+  return <div style={style}></div>;
+};
+export default Box;
+```
+위 로직은 UseCallback 컴포넌트에 input값을 변경하면 Box 컴포넌트에 props 전달된 changeBoxSize 함수를 통해 Box의 크기를 조정할 수 있는 로직이다.
+Box 컴포넌트의 useEffect 훅을 통해서 changeBoxSize의 값이 변경되면 console에 "style 변경!"을 출력함으로써 css가 변경된 것을 사용자가 알 수 있다.
+하지만 위 컴포넌트를 실행해보면 forceRender 값이 변경되어도 console에 "style 변경!"이 출력되는 것을 알 수 있다.
+왜 이런 결과가 나온걸까? 
+```javascript
+  const changeBoxSize = () => {
+    return { backgroundColor: "red", width: `${sizeCss}px`, height: `${sizeCss}px` };
+  };
+```
+forceRender값이 변경되면 UseCallback 컴포넌트 내에 있는 모든 변수 및 함수가 초기화 된다. 이때 changeBoxSize 함수 또한 초기화되고 함수 또한 자바스크립트에서 객체 타입이므로 초기화 이전과 다른값(주소값)을 가지게 된다. 따라서 sizeCss 값이 아닌 다른 어떤 상태가 변경되어도 changeBoxSize에 할당된 함수 객체는 메모리 주소가 다른 객체이므로 useEffect 훅에 의해서 console이 출력되는 것을 알 수 있다. 그러면 이런 문제를 해결하려면 어떻게 하면 될까?
+```javascript
+const UseCallback = () => {
+  const [sizeCss, setSizeCss] = useState(100);
+  const [forceRender, setForceRender] = useState(false);
+
+  const changeBoxSize = useCallback(() => {
+    return { backgroundColor: "red", width: `${sizeCss}px`, height: `${sizeCss}px` };
+  }, [sizeCss]);
+
+  return (
+    <>
+      <input type="number" value={sizeCss} onChange={(e) => setSizeCss(e.target.value)} />
+      <button onClick={() => setForceRender(!forceRender)}>setState</button>
+      <Box changeBoxSize={changeBoxSize} />
+    </>
+  );
+};
+
+export default UseCallback;
+```
+위 코드와 같이 
+```javascript
+() => {
+    return { backgroundColor: "red", width: `${sizeCss}px`, height: `${sizeCss}px` };
+  }
+```
+함수를 useCallback로 감싸주고 의존성 배열에 sizeCss를 추가하면 된다. 이렇게 코드를 작성하면 의존성 배열에 있는 값이 변경될때만 changeBoxSize가 초기화되고 이 외에 상태값이 변경되면 초기화되지 않고 이전에 캐싱하고 있던 값을 재사용하게 된다.
