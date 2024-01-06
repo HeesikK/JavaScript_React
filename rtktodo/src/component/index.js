@@ -3,18 +3,12 @@ import TodoModal from "./todoModal";
 import styled from "styled-components";
 import OneTodo from "./oneTodo";
 import { useSelector, useDispatch } from "react-redux";
-import { getTodo } from "../reducer/todoReducer";
+import { addTodo } from "../reducer/todoReducer";
 
 const TodoList = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [todoList, setTodoList] = useState([]);
-  const dispatch = useDispatch();
-  const todo = useSelector((state) => state.todo);
-  console.log(todo);
-
-  useEffect(() => {
-    dispatch(getTodo({ title: "example" }));
-  }, []);
+  const todos = useSelector((state) => state.todo);
+  console.log(todos.todos);
 
   const onOpenModal = () => {
     setIsOpenModal(true);
@@ -27,11 +21,11 @@ const TodoList = () => {
           todos
           <Button onClick={onOpenModal}>추가</Button>
         </ListBar>
-        {todoList.map((todo) => (
-          <OneTodo todo={todo} todoList={todoList} setTodoList={setTodoList} />
+        {todos?.todos.map((todo) => (
+          <OneTodo todo={todo} />
         ))}
       </Wrapper>
-      {isOpenModal && <TodoModal setIsOpenModal={setIsOpenModal} setTodoList={setTodoList} />}
+      {isOpenModal && <TodoModal setIsOpenModal={setIsOpenModal} />}
     </>
   );
 };

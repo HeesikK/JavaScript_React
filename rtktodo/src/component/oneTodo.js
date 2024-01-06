@@ -2,24 +2,22 @@ import styled from "styled-components";
 import modifyIcon from "../img/modify.png";
 import deleteIcon from "../img/delete.png";
 import { useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { deleteTodo, updateTodo } from "../reducer/todoReducer";
 
-const OneTodo = ({ todo, todoList, setTodoList }) => {
+const OneTodo = ({ todo }) => {
   const [isModify, setIsModify] = useState(false);
   const todoContentInput = useRef(null);
+  const dispatch = useDispatch();
 
-  const onDeleteTodo = (el) => {
-    const delete_list = todoList.filter((item) => item.id !== el);
-    setTodoList(delete_list);
+  const onDeleteTodo = () => {
+    dispatch(deleteTodo({ id: todo.id }));
   };
 
-  const onModifyTodo = (el) => {
+  const onModifyTodo = () => {
     if (!isModify) return setIsModify(true);
     if (window.confirm("정말 수정하시겠습니까?")) {
-      setTodoList((todoList) => {
-        const update_todo = todoList.find((item) => item.id === el);
-        update_todo.content = todoContentInput.current.value;
-        return todoList;
-      });
+      dispatch(updateTodo({ id: todo.id, content: todoContentInput.current.value }));
       setIsModify(false);
     }
   };

@@ -1,11 +1,15 @@
 import styled from "styled-components";
 import closeIcon from "../img/x.png";
+import { useSelector, useDispatch } from "react-redux";
+import { addTodo } from "../reducer/todoReducer";
 
-const TodoModal = ({ setIsOpenModal, setTodoList }) => {
+const TodoModal = ({ setIsOpenModal }) => {
+  const dispatch = useDispatch();
   const onAddTodo = (e) => {
     e.preventDefault();
     const { content } = e.target;
-    setTodoList((prev) => [...prev, { id: Math.floor(Math.random() * 10000), content: content.value }]);
+    dispatch(addTodo({ content: content.value }));
+    // setTodoList((prev) => [...prev, { id: Math.floor(Math.random() * 10000), content: content.value }]);
     setIsOpenModal(false);
   };
 
