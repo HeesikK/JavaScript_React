@@ -43,3 +43,44 @@ react query란?
   - cacheTime의 default value는 5분이다.
 
   staleTime이 0분이고 cacheTime이 5분이면 해당 쿼리를 사용하는 컴포넌트가 mount 되었을때 매번 다시 api를 요청
+
+그러면 왜 react-query를 사용할까?
+
+- Client 데이터와 Server 데이터의 분리
+  프로젝트의 규모가 커지고 관리해야할 데이터가 많아지면서, Client에서 관리하는 데이터와 Server에서 관리하는 데이터가 분리될 필요성이 생김
+
+  비동기 데이터를 React Component의 State에 보관하게 될 경우 Component의 Lifecycle에 따라 비동기 데이터가 관리되므로 캐싱 등 최적화를 수행하기 어려움
+  또한 다수의 Component에서 동일한 Api를 호출하거나, 특정 응답이 다른 Api에 영향을 미치는 경우 등 복잡하지만 빈번하게 요구되는 사용자 시나리오에 대응하기 어려움
+
+  캐싱과 같은 최적화 작업을 쉽게 수행할 수 있고 복잡한 사용자 시나리오에 대한 대응도 용이함.
+
+react-query의 대표적인 기능은?
+
+1. useQuery
+
+ex) 사용 예시
+
+```javascript
+const { data } = useQuery(
+  queryKey, // 이 Query 요청에 대한 응답 데이터를 캐시할 때 사용할 Unique Key (required)
+  fetchFn, // 이 Query 요청을 수행하기 위한 Promise를 Return 하는 함수 (required)
+  options // useQuery에서 사용되는 Option 객체 (optional)
+);
+```
+
+useQuery Hook으로 수행되는 Query 요청은 HTTP METHOD GET 요청과 같이 서버에 저장되어 있는 “상태”를 불러와 사용할 때 사용.
+React Query의 useQuery Hook은 요청마다 (API마다) 구분되는 Unique Key를 필요로 함. React Query는 이 Unique Key로 서버 상태(API Response)를
+로컬에 캐시하고 관리.
+
+2. useMutation
+
+ex) 사용 예시
+
+```javascript
+const { mutate } = useMutation(
+  mutationFn, // 이 Mutation 요청을 수행하기 위한 Promise를 Return 하는 함수 (required)
+  options // useMutation에서 사용되는 Option 객체 (optional)
+);
+```
+
+useMutation Hook으로 수행되는 Mutation 요청은 HTTP METHOD POST, PUT, DELETE 요청과 같이 서버에 Side Effect를 발생시켜 서버의 상태를 변경시킬 때 사용. useMutation Hook의 첫번째 파라미터는 이 Mutation 요청을 수행하기 위한 Promise를 Return 하는 함수이며, useMutation의 return 값 중 mutate(또는 mutateAsync) 함수를 호출하여 서버에 Side Effect를 발생시킬 수 있음.
