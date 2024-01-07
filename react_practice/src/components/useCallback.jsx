@@ -9,6 +9,10 @@ const UseCallback = () => {
     return { backgroundColor: "red", width: `${sizeCss}px`, height: `${sizeCss}px` };
   }, [sizeCss]);
 
+  // const changeBoxSize = () => {
+  //   return { backgroundColor: "red", width: `${sizeCss}px`, height: `${sizeCss}px` };
+  // };
+
   return (
     <>
       <input type="number" value={sizeCss} onChange={(e) => setSizeCss(e.target.value)} />
