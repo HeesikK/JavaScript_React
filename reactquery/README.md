@@ -84,3 +84,5 @@ const { mutate } = useMutation(
 ```
 
 useMutation Hook으로 수행되는 Mutation 요청은 HTTP METHOD POST, PUT, DELETE 요청과 같이 서버에 Side Effect를 발생시켜 서버의 상태를 변경시킬 때 사용. useMutation Hook의 첫번째 파라미터는 이 Mutation 요청을 수행하기 위한 Promise를 Return 하는 함수이며, useMutation의 return 값 중 mutate(또는 mutateAsync) 함수를 호출하여 서버에 Side Effect를 발생시킬 수 있음.
+
+// https://duckgugong.tistory.com/327
