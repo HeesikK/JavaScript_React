@@ -29,5 +29,6 @@ const DetailPage = () => {
     </>
   );
 };
+// https://duckgugong.tistory.com/327
 
 export default DetailPage;
