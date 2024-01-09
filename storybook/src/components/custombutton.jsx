@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import PropTypes from "prop-types";
 
 const CustomButton = ({ variant, size, shape, children, ...rest }) => {
   console.log(variant, size, shape, children);
@@ -10,6 +11,21 @@ const CustomButton = ({ variant, size, shape, children, ...rest }) => {
 };
 
 export default CustomButton;
+
+// CustomButton의 기본 Props값
+CustomButton.defaultProps = {
+  variant: "primary",
+  size: "large",
+  shape: "round",
+  children: "추가",
+};
+
+CustomButton.propTypes = {
+  variant: PropTypes.oneOf(["primary", "secondary"]),
+  size: PropTypes.oneOf(["small", "medium", "large"]),
+  shape: PropTypes.oneOf(["shape", "round"]),
+  children: PropTypes.string,
+};
 
 const variantCSS = {
   primary: css`

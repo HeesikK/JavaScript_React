@@ -1,12 +1,14 @@
 import logo from "./logo.svg";
 import "./App.css";
-import CustomButton from "./components/button";
+import HomePage from "./pages";
+import { ThemeProvider } from "styled-components";
+import theme from "./styles/theme";
 
 function App() {
   return (
-    <CustomButton size={"large"} shape={"shape"}>
-      로그인
-    </CustomButton>
+    <ThemeProvider theme={theme}>
+      <HomePage />
+    </ThemeProvider>
   );
 }
 
